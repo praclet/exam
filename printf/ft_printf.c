@@ -23,13 +23,13 @@ int ft_strlen(const char *s)
 
 int nblen(int nb, int len_base)
 {
-	int res=0;
+	int res=!!(nb<0);
 
 	do {
 		res++;
 	}
 	while (nb/=len_base);
-	return res+!!(nb<0);
+	return res;
 }
 
 void parse(const char **s)
@@ -88,7 +88,7 @@ int print_s(va_list ap)
 
 int print_nb(va_list ap, const char* base)
 {
-	int nb=va_arg(ap,int);
+	long nb=va_arg(ap,int);
 	int len_base=ft_strlen(base);
 	int len=nblen(nb,len_base);
 	int res=0;
@@ -104,6 +104,7 @@ int print_nb(va_list ap, const char* base)
 	{
 		pos=1;
 		str[0]='-';
+		nb=-nb;
 	}
 	else
 		pos=0;
