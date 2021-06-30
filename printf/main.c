@@ -1,6 +1,9 @@
 int ft_printf(const char *fmt,...);
 
+#include <limits.h>
+
 int main(void) {
+	/*
 	int tmp;
 
 	ft_printf("Test |");
@@ -17,5 +20,15 @@ int main(void) {
 	ft_printf("Hexadecimal for 42 is 2a");
 	ft_printf("|\n");
 
+	ft_printf("\n\n\n");
+	tmp=ft_printf("%8d",123456);
+	ft_printf(" %d\n",tmp);
+	tmp=ft_printf("%8x",123456);
+	ft_printf(" %d\n",tmp);
+*/
+
+	ft_printf("%d\n",UINT_MAX);
+	ft_printf("%d\n",INT_MAX);
+	ft_printf("%d\n",INT_MIN);
 
 }
