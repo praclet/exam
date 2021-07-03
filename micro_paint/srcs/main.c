@@ -17,6 +17,8 @@ struct {
 	float y1;
 } g_rectangle;
 
+int g_return_code;
+
 void free_board()
 {
 	free(g_board.board);
@@ -35,6 +37,7 @@ void print_error(char *msg)
 		write(1,"\n",1);
 	}
 	free_board();
+	g_return_code = 1;
 }
 
 void print_arg_error()
@@ -134,29 +137,30 @@ void print_board(void)
 
 int main(int argc, char **argv)
 {
+	g_return_code = 0;
 	g_board.board = NULL;
 	if (argc != 2)
 	{
 		print_arg_error();
-		return 1;
+		return g_return_code ;
 	}
 	FILE *operation_file=fopen(argv[1],"r");
 	if (!operation_file)
 	{
 		print_file_error();
 		fclose(operation_file);
-		return 1;
+		return g_return_code ;
 	}
 	if (!process_first_line(operation_file))
 	{
 		print_file_error();
 		fclose(operation_file);
-		return 1;
+		return g_return_code ;
 	}
 	while (process_main_line(operation_file))
 		;
 	fclose(operation_file);
 	print_board();
 	free_board();
-	return 0;
+	return g_return_code ;
 }
