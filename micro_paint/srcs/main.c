@@ -52,7 +52,7 @@ int process_first_line(FILE *operation_file)
 	if (!operation_file)
 		return 0;
 	char background;
-	if (fscanf(operation_file, "%i %i %c\n", &g_board.width, &g_board.height, &background) != 3)
+	if (fscanf(operation_file, "%i %i %c", &g_board.width, &g_board.height, &background) != 3)
 		return 0;
 	if (g_board.width <= 0 || g_board.width > 300 || g_board.height <= 0 || g_board.height > 300)
 		return 0;
@@ -61,6 +61,16 @@ int process_first_line(FILE *operation_file)
 		return 0;
 	memset(g_board.board, background, g_board.width * g_board.height);
 	return 1;
+}
+
+int is_on_border(float x, float y)
+{
+	return 
+		(((g_rectangle.x0 <= x && x < g_rectangle.x0 + 1) || (g_rectangle.x1 <= x && x < g_rectangle.x1 + 1))
+			&& g_rectangle.y0 <= y && y <= g_rectangle.y1)
+		||
+		(((g_rectangle.y0 <= y && y < g_rectangle.y0 + 1) || (g_rectangle.y1 <= y && y < g_rectangle.y1 + 1))
+			&& g_rectangle.x0 <= x && x <= g_rectangle.x1);
 }
 
 int is_in_rectangle(float x, float y)
@@ -78,8 +88,17 @@ int process_main_line(FILE *operation_file)
 	char brush;
 	float x;
 	float y;
+	char nl_char;
 
-	nb_variables=fscanf(operation_file, "%c %f %f %f %f %c\n", &rectangle_type, &g_rectangle.x0, &g_rectangle.y0, &width, &height, &brush);
+	if (fread(&nl_char, sizeof(char), 1, operation_file)!=1)
+	{
+		if (nl_char != '\n')
+			print_file_error();
+		return 0;
+	}
+	nb_variables=fscanf(operation_file, "%c %f %f %f %f %c",
+			&rectangle_type, &g_rectangle.x0, &g_rectangle.y0,
+			&width, &height, &brush);
 	if (nb_variables == EOF)
 		return 0;
 	if (nb_variables != 6 || (rectangle_type != 'r' && rectangle_type != 'R') || width <= 0 || height <= 0)
@@ -91,7 +110,8 @@ int process_main_line(FILE *operation_file)
 	g_rectangle.y1=g_rectangle.y0 + height;
 	for (x=0;x<g_board.width;x++)
 		for (y=0;y<g_board.height;y++)
-			if (is_in_rectangle(x,y))
+			if ((rectangle_type == 'R' && is_in_rectangle(x,y))
+				|| is_on_border(x,y))
 				g_board.board[(int)(x+y*g_board.width)]=brush;
 
 	return 1;
