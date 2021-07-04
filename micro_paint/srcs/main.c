@@ -68,12 +68,19 @@ int process_first_line(FILE *operation_file)
 
 int is_on_border(float x, float y)
 {
-	return 
-		(((g_rectangle.x0 <= x && x < g_rectangle.x0 + 1) || (g_rectangle.x1 <= x && x < g_rectangle.x1 + 1))
-			&& g_rectangle.y0 <= y && y <= g_rectangle.y1)
-		||
-		(((g_rectangle.y0 <= y && y < g_rectangle.y0 + 1) || (g_rectangle.y1 <= y && y < g_rectangle.y1 + 1))
-			&& g_rectangle.x0 <= x && x <= g_rectangle.x1);
+int a=		g_rectangle.x0 <= x && x < g_rectangle.x0 + 1;
+int b=		  g_rectangle.x1 <= x && x < g_rectangle.x1 + 1;
+int c=		g_rectangle.y0 <= y && y <= g_rectangle.y1;
+int d=		g_rectangle.y0 <= y && y < g_rectangle.y0 + 1; 
+int e=			g_rectangle.y1 <= y && y < g_rectangle.y1 + 1;
+int f=			g_rectangle.x0 <= x && x <= g_rectangle.x1;
+return ((a || b) && c) || ((d || e) && f);
+//	return 
+//		(((g_rectangle.x0 <= x && x < g_rectangle.x0 + 1) || (g_rectangle.x1 <= x && x < g_rectangle.x1 + 1))
+//			&& g_rectangle.y0 <= y && y <= g_rectangle.y1)
+//		||
+//		(((g_rectangle.y0 <= y && y < g_rectangle.y0 + 1) || (g_rectangle.y1 <= y && y < g_rectangle.y1 + 1))
+//			&& g_rectangle.x0 <= x && x <= g_rectangle.x1);
 }
 
 int is_in_rectangle(float x, float y)
@@ -114,7 +121,7 @@ int process_main_line(FILE *operation_file)
 	for (x=0;x<g_board.width;x++)
 		for (y=0;y<g_board.height;y++)
 			if ((rectangle_type == 'R' && is_in_rectangle(x,y))
-				|| is_on_border(x,y))
+			|| (rectangle_type == 'r' && is_on_border(x,y)))
 				g_board.board[(int)(x+y*g_board.width)]=brush;
 
 	return 1;
